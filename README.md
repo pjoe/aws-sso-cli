@@ -38,6 +38,26 @@ aws-sso-cli() {
 }
 ```
 
+For windows you can add this to your PowerShell profile (use e.g. `notepad $PROFILE`):
+```powershell
+function Set-AWSSSOEnvironmentVariables {
+    [CmdletBinding()]
+    param()
+
+    $commandOutput = Invoke-Expression -Command 'npx aws-sso-cli'
+    foreach ($line in $commandOutput) {
+        if ($line -match 'export\s+(\w+)=(\S+)') {
+            $name = $matches[1]
+            $value = $matches[2]
+            Write-Host "Setting environment variable $name"
+            Set-Item -Path "env:$name" -Value $value
+        }
+    }
+}
+
+Set-Alias -Name aws-sso-cli -Value Set-AWSSSOEnvironmentVariables
+```
+
 ## Usage
 
 ```
